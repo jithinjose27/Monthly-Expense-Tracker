@@ -144,6 +144,7 @@
     el.setupAnonKeyInput = document.getElementById('setupAnonKeyInput');
     el.saveCloudSetupBtn = document.getElementById('saveCloudSetupBtn');
     el.clearCloudSetupBtn = document.getElementById('clearCloudSetupBtn');
+    el.setupGoToLoginBtn = document.getElementById('setupGoToLoginBtn');
     el.setupMsg = document.getElementById('setupMsg');
   }
 
@@ -1554,6 +1555,13 @@
       if (e.target === el.cloudSetupModal) closeCloudSetupModal();
     });
 
+    if (el.setupGoToLoginBtn) {
+      el.setupGoToLoginBtn.addEventListener('click', () => {
+        closeCloudSetupModal();
+        openAuthModal();
+      });
+    }
+
     el.saveCloudSetupBtn.addEventListener('click', () => {
       const url = el.setupUrlInput.value.trim();
       const anonKey = el.setupAnonKeyInput.value.trim();
@@ -1578,7 +1586,10 @@
         setTimeout(() => {
           closeCloudSetupModal();
           loadDataForCurrentMonth(false);
-        }, 1200);
+          if (!state.isAuthenticated) {
+            openAuthModal();
+          }
+        }, 900);
       } else {
         alert('Could not initialize Supabase client. Please check the URL format.');
       }
