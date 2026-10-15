@@ -8,7 +8,8 @@ import os
 import generate_excel
 
 def generate_seed():
-    excel_file = "Monthly_Expense_October_2026.xlsx"
+    scripts_dir = os.path.dirname(os.path.abspath(__file__))
+    excel_file = os.path.join(scripts_dir, "Monthly_Expense_October_2026.xlsx")
     if not os.path.exists(excel_file):
         print(f"File {excel_file} not found.")
         return
@@ -65,7 +66,7 @@ def generate_seed():
     sql_lines.append("\n    RAISE NOTICE 'Successfully seeded October 2026 budget (₹%) and % days of expenses!', " + f"{budget}, {len(days)};")
     sql_lines.append("END $$;\n")
 
-    output_file = "seed_october_2026.sql"
+    output_file = os.path.join(scripts_dir, "..", "database", "seed_october_2026.sql")
     with open(output_file, "w") as out:
         out.write("\n".join(sql_lines))
 

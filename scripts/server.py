@@ -15,26 +15,29 @@ import sys
 import generate_excel
 
 PORT = 5000
-WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.abspath(os.path.join(SCRIPTS_DIR, '..', 'src'))
+ROOT_DIR = os.path.abspath(os.path.join(SCRIPTS_DIR, '..'))
 
 def get_xlsx_filename(year, month):
     month_name = calendar.month_name[month]
-    # Check common naming conventions in workspace
+    # Check common naming conventions in scripts and root
     candidates = [
         f"Monthly_Expense_{month_name}_{year}.xlsx",
         f"Monthly_Expense_Tracker_{month_name}_{year}.xlsx",
         f"monthly_expense_{month_name.lower()}_{year}.xlsx"
     ]
     for c in candidates:
-        full_path = os.path.join(WORKSPACE_DIR, c)
-        if os.path.exists(full_path):
-            return full_path
-    # Default to first candidate
-    return os.path.join(WORKSPACE_DIR, candidates[0])
+        for folder in [SCRIPTS_DIR, ROOT_DIR]:
+            full_path = os.path.join(folder, c)
+            if os.path.exists(full_path):
+                return full_path
+    # Default to SCRIPTS_DIR candidate
+    return os.path.join(SCRIPTS_DIR, candidates[0])
 
 class ExpenseTrackerHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=WORKSPACE_DIR, **kwargs)
+        super().__init__(*args, directory=SRC_DIR, **kwargs)
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)

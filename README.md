@@ -48,18 +48,26 @@ Accessible from any phone, laptop, or desktop via a single public URL with **ins
 ## 📁 Project Structure
 
 ```
-Monthly_Expense/
-├── index.html                           # Main web application & responsive spreadsheet
-├── styles.css                           # Executive styling, sticky columns, modals, themes
-├── app.js                               # Calculations, Supabase cloud sync, auth, SVG charts
-├── supabase-config.js                   # Safe public publishable credentials configuration
-├── supabase_schema.sql                  # PostgreSQL schema, indexes & Row Level Security (RLS)
-├── generate_seed_sql.py                 # Tool to export Excel data into Supabase seed SQL
-├── seed_october_2026.sql                # Pre-generated migration script for October 2026
-├── Monthly_Expense_October_2026.xlsx    # Preserved local Excel file (₹12,510 budget + daily entries)
-├── server.py                            # Optional local Python HTTP test server
-├── generate_excel.py                    # Local OpenXML Excel generator engine
-└── .gitignore                           # Git ignore rules for caches, lock files, and secrets
+Monthly-Expense-Tracker/
+├── src/                                  # 🌐 Frontend Web Application (Deployed to Vercel)
+│   ├── index.html                        # Application interface & spreadsheet
+│   ├── styles.css                        # Executive styling, themes & responsive rules
+│   ├── app.js                            # Core logic, calculations, charts & cloud sync
+│   └── supabase-config.js                # Public cloud configuration
+│
+├── database/                             # 🗄️ Database & Schema (For Supabase)
+│   ├── supabase_schema.sql               # Table definitions & Row Level Security (RLS)
+│   └── seed_october_2026.sql             # October 2026 data migration script
+│
+├── scripts/                              # 🐍 Python Tools & Local Utilities
+│   ├── generate_excel.py                 # OpenXML Excel engine
+│   ├── generate_seed_sql.py              # Excel-to-SQL migration generator
+│   ├── server.py                         # Local test server
+│   └── Monthly_Expense_October_2026.xlsx # Preserved historical Excel workbook
+│
+├── .gitignore                            # Git ignore rules for caches, lock files, and secrets
+├── vercel.json                           # Vercel deployment configuration (outputDirectory: src)
+└── README.md                             # Project documentation & guide
 ```
 
 ---
@@ -70,11 +78,11 @@ Monthly_Expense/
 1. Go to [supabase.com](https://supabase.com) and create a free account.
 2. Click **New Project** and name it (e.g., `personal-expense-tracker`).
 3. In the Supabase Dashboard, open the **SQL Editor** (left navigation).
-4. Open [supabase_schema.sql](supabase_schema.sql), paste its entire content into the SQL Editor, and click **Run**.
+4. Open [database/supabase_schema.sql](database/supabase_schema.sql), paste its entire content into the SQL Editor, and click **Run**.
    - This creates `expenses` and `monthly_budgets` tables.
    - It enables Row Level Security (RLS) with public read access and owner-only editing.
 5. In your Supabase Dashboard, go to **Authentication > Users** and click **Add User > Create User** (or use your app's "Create Owner Account" option in the UI).
-6. In the SQL Editor, open [seed_october_2026.sql](seed_october_2026.sql), paste its content, and click **Run**.
+6. In the SQL Editor, open [database/seed_october_2026.sql](database/seed_october_2026.sql), paste its content, and click **Run**.
    - This populates your existing October 2026 budget (₹12,510) and all recorded expenses into the database!
 7. In the Supabase Dashboard, go to **Project Settings > API**:
    - Copy your **Project URL** (e.g. `https://xyzcompany.supabase.co`).
@@ -83,7 +91,7 @@ Monthly_Expense/
 
 ### Step 2: Configure Credentials in the App
 You can either:
-- Open [supabase-config.js](supabase-config.js) and paste the `url` and `anonKey`.
+- Open [src/supabase-config.js](src/supabase-config.js) and paste the `url` and `anonKey`.
 - OR open the website, click **⚙️ Cloud Setup** in the status bar, paste your Project URL and Anon Key, and click **Save & Connect**. (Saved safely in browser storage).
 
 ### Step 3: Push to GitHub (Private Repository)
