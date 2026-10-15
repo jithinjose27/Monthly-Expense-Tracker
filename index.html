@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Personal Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Supabase JS Client v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase Config (Safe public/publishable credentials) -->
+  <script src="supabase-config.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Header & Navigation -->
+    <header class="top-header">
+      <div class="brand-section">
+        <div class="brand-icon">₹</div>
+        <div class="brand-titles">
+          <h1>Monthly Personal Expense Tracker</h1>
+          <p>Daily Food (Chicken, Eggs, Bananas) & Living Expenses</p>
+        </div>
+      </div>
+
+      <!-- Month & Year Selector (Supports all months & multi-year Oct 2026 - Dec 2027+) -->
+      <div class="month-selector-bar">
+        <button id="prevMonthBtn" class="nav-arrow-btn" title="Previous Month">◀</button>
+        <div class="select-group">
+          <select id="monthSelect" class="custom-select" aria-label="Select Month">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10" selected>October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <input type="number" id="yearInput" class="custom-year-input" value="2026" min="2020" max="2035" aria-label="Select Year" />
+        </div>
+        <button id="nextMonthBtn" class="nav-arrow-btn" title="Next Month">▶</button>
+        <button id="currentMonthBtn" class="current-month-btn">Current Month</button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button id="sampleDataBtn" class="btn btn-outline" title="Populate realistic sample data">
+          <span>📋</span> Sample Data
+        </button>
+        <button id="clearMonthBtn" class="btn btn-danger" title="Clear all expenses for this month">
+          <span>🗑️</span> Clear Month
+        </button>
+        <button id="exportExcelBtn" class="btn btn-accent" title="Download Excel Spreadsheet (.xls)">
+          <span>📊</span> Export Excel
+        </button>
+        <button id="exportCsvBtn" class="btn btn-outline" title="Download CSV file">
+          <span>📄</span> Export CSV
+        </button>
+        <button id="printBtn" class="btn btn-primary" title="Print or save as PDF">
+          <span>🖨️</span> Print / PDF
+        </button>
+        <!-- Auth Button -->
+        <button id="authBtn" class="btn btn-auth" title="Sign In or Manage Account">
+          <span>🔑</span> Sign In
+        </button>
+      </div>
+    </header>
+
+    <!-- Cloud Sync & Role Status Bar -->
+    <div class="sync-status-bar" id="syncStatusBar">
+      <div class="sync-indicator">
+        <span class="status-dot dot-offline" id="syncStatusDot"></span>
+        <span id="syncStatusText">Loading Cloud Connection...</span>
+        <span class="role-badge badge-visitor" id="roleBadge">👁️ Visitor (Read-Only)</span>
+      </div>
+      <div class="sync-actions">
+        <button id="syncReloadBtn" class="btn btn-sm btn-outline" title="Reload data for current month from cloud">
+          🔄 Refresh
+        </button>
+        <button id="cloudSetupBtn" class="btn btn-sm btn-outline" title="Configure or check Supabase cloud credentials">
+          ⚙️ Cloud Setup
+        </button>
+        <button id="syncSaveBtn" class="btn btn-sm btn-accent" style="display: none;" title="Save current changes immediately to Supabase">
+          💾 Save Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- Monthly Budget Tracker & Alert Banner -->
+    <section class="budget-alert-card">
+      <div class="budget-row">
+        <div class="budget-input-wrapper">
+          <span class="budget-label">Monthly Budget:</span>
+          <div class="budget-input-box">
+            <span class="currency-sym">₹</span>
+            <input type="number" id="budgetInput" class="budget-input" value="5000" min="0" step="500" />
+          </div>
+        </div>
+
+        <div class="budget-stats-pill">
+          <div class="stat-item">
+            <span class="stat-title">Total Spent</span>
+            <span id="totalSpentDisplay" class="stat-val">₹0.00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-title">Remaining Budget</span>
+            <span id="budgetRemainingDisplay" class="stat-val positive">₹5,000.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="budget-progress-container">
+        <div class="progress-track">
+          <div id="budgetProgressFill" class="progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Dynamic Budget Alert Banner -->
+      <div id="budgetAlertBanner" class="budget-alert-banner banner-success">
+        ✓ <strong>Budget on Track:</strong> You have ₹5,000.00 remaining.
+      </div>
+    </section>
+
+    <!-- Summary KPI Cards -->
+    <section class="summary-kpi-grid">
+      <!-- Total Monthly Expense -->
+      <div class="kpi-card highlight-kpi">
+        <div class="kpi-header">
+          <span class="kpi-label">Total Monthly Expense</span>
+          <span class="kpi-badge">Monthly</span>
+        </div>
+        <div id="kpiTotalExpense" class="kpi-value">₹0.00</div>
+        <div class="kpi-subtext">Sum of all daily expenses</div>
+      </div>
+
+      <!-- Remaining Budget -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Remaining Budget</span>
+          <span class="kpi-badge">Balance</span>
+        </div>
+        <div id="kpiRemainingBudget" class="kpi-value">₹5,000.00</div>
+        <div class="kpi-subtext">Budget minus total spent</div>
+      </div>
+
+      <!-- Average Daily Expense -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Average Daily Expense</span>
+          <span class="kpi-badge">Per Day</span>
+        </div>
+        <div id="kpiDailyAvg" class="kpi-value">₹0.00</div>
+        <div class="kpi-subtext">Across all days in month</div>
+      </div>
+
+      <!-- Highest Spending Day -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Highest Spending Day</span>
+          <span class="kpi-badge" style="color: #ea580c; background: #ffedd5;">Peak</span>
+        </div>
+        <div id="kpiHighestDay" class="kpi-value" style="font-size: 18px; margin-top: 4px;">None</div>
+        <div class="kpi-subtext">Highest recorded day</div>
+      </div>
+
+      <!-- Lowest Spending Day -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Lowest Spending Day</span>
+          <span class="kpi-badge" style="color: #16a34a; background: #dcfce7;">Low</span>
+        </div>
+        <div id="kpiLowestDay" class="kpi-value" style="font-size: 18px; margin-top: 4px;">None</div>
+        <div class="kpi-subtext">Lowest active spending day</div>
+      </div>
+
+      <!-- Food Share % -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Food Expense Share</span>
+          <span class="kpi-badge" style="color: #059669; background: #d1fae5;">Diet</span>
+        </div>
+        <div id="kpiFoodPercent" class="kpi-value">0.0%</div>
+        <div class="kpi-subtext">Chicken, Eggs, Bananas & Food</div>
+      </div>
+    </section>
+
+    <!-- Category Contribution Cards -->
+    <section class="category-summary-row" id="catSummaryContainer">
+      <!-- Dynamically populated by app.js: Chicken, Eggs, Bananas, Other Food, Other Expenses -->
+    </section>
+
+    <!-- Visual Charts Grid -->
+    <section class="charts-grid">
+      <!-- Category Doughnut Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <h3>Spending by Category</h3>
+            <span class="chart-subtitle">Contribution to total spending</span>
+          </div>
+          <span style="font-size: 18px;">🍩</span>
+        </div>
+        <div class="chart-body" id="doughnutChartBox">
+          <!-- Rendered in SVG by app.js -->
+        </div>
+      </div>
+
+      <!-- Daily Spending Bar Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <h3>Daily Expenses Throughout Month</h3>
+            <span class="chart-subtitle">Hover bar for details • Click bar to jump to day</span>
+          </div>
+          <span style="font-size: 18px;">📊</span>
+        </div>
+        <div class="chart-body" id="barChartBox">
+          <!-- Rendered in SVG by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Table Toolbar -->
+    <div class="table-toolbar">
+      <div class="toolbar-left">
+        <span id="tableTitle" class="toolbar-title">October 2026 Daily Breakdown</span>
+        <span id="tableDaysCount" class="table-badge-count">31 Days</span>
+      </div>
+
+      <div class="toolbar-right">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Search notes or days..." />
+        </div>
+
+        <label class="toggle-switch-wrapper">
+          <input type="checkbox" id="highSpendingToggle" class="toggle-checkbox" checked />
+          <span>Highlight High-Spending Days</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Daily Expense Spreadsheet Table -->
+    <div class="spreadsheet-card">
+      <div class="table-scroll-wrapper">
+        <table class="spreadsheet-table" id="spreadsheetTable">
+          <thead>
+            <tr>
+              <th class="th-date col-sticky-date">Date</th>
+              <th class="th-day col-sticky-day">Day</th>
+              <th class="th-exp" style="color: #fde68a;">🍗 Chicken (₹)</th>
+              <th class="th-exp" style="color: #fef08a;">🥚 Eggs (₹)</th>
+              <th class="th-exp" style="color: #bef264;">🍌 Bananas (₹)</th>
+              <th class="th-exp" style="color: #a7f3d0;">🥗 Other Food (₹)</th>
+              <th class="th-exp" style="color: #c7d2fe;">💳 Other Expenses (₹)</th>
+              <th class="th-total" style="color: #38bdf8;">Daily Total (₹)</th>
+              <th class="th-notes">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="spreadsheetBody">
+            <!-- Dynamically populated by app.js with 28, 29, 30, or 31 rows -->
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="tfoot-label col-sticky-date" colspan="2">TOTAL</td>
+              <td id="footChicken">₹0.00</td>
+              <td id="footEggs">₹0.00</td>
+              <td id="footBananas">₹0.00</td>
+              <td id="footOtherFood">₹0.00</td>
+              <td id="footOtherExp">₹0.00</td>
+              <td id="footGrandTotal" class="tfoot-grand-total">₹0.00</td>
+              <td style="text-align: left; font-style: italic; color: #94a3b8; font-size: 11px;">
+                Monthly Summary Total
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Chart Tooltip -->
+    <div id="chartTooltip" class="chart-tooltip"></div>
+
+    <!-- Toast Notification -->
+    <div id="toastMsg" class="toast-msg">Notification</div>
+
+  </div>
+
+  <!-- =========================================================================
+       Authentication Modal (Owner Login / Sign Up)
+       ========================================================================= -->
+  <div id="authModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="authModalTitle">🔑 Owner Authentication</h3>
+        <button id="closeAuthModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info-text">
+          Sign in with your owner account to enable cloud editing and database synchronization. Visitors have full read-only access.
+        </p>
+        <div class="form-group">
+          <label for="authEmailInput">Email Address</label>
+          <input type="email" id="authEmailInput" class="form-input" placeholder="youremail@example.com" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label for="authPasswordInput">Password</label>
+          <input type="password" id="authPasswordInput" class="form-input" placeholder="••••••••••••" autocomplete="current-password" required />
+        </div>
+        <div id="authErrorMsg" class="modal-alert-error" style="display: none;"></div>
+        <div id="authSuccessMsg" class="modal-alert-success" style="display: none;"></div>
+        
+        <div class="auth-buttons-row">
+          <button id="authSubmitBtn" class="btn btn-primary btn-block">Sign In</button>
+        </div>
+        <div class="auth-toggle-row">
+          <span id="authToggleText">First time setup?</span>
+          <button id="authToggleModeBtn" class="link-btn">Create Owner Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Cloud Setup Modal (Configure Supabase URL & Anon Key safely in browser)
+       ========================================================================= -->
+  <div id="cloudSetupModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>⚙️ Supabase Cloud Setup</h3>
+        <button id="closeCloudSetupBtn" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info-text">
+          Enter your <strong>Supabase Project URL</strong> and <strong>Public/Publishable Anon Key</strong> (from Supabase Dashboard &gt; Project Settings &gt; API).
+          <br><strong style="color: #dc2626;">Never paste your service_role secret key or database password.</strong>
+        </p>
+        <div class="form-group">
+          <label for="setupUrlInput">Supabase Project URL</label>
+          <input type="url" id="setupUrlInput" class="form-input" placeholder="https://your-project-id.supabase.co" />
+        </div>
+        <div class="form-group">
+          <label for="setupAnonKeyInput">Supabase Publishable Anon Key</label>
+          <textarea id="setupAnonKeyInput" class="form-input form-textarea" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
+        </div>
+        <div id="setupMsg" class="modal-alert-success" style="display: none;"></div>
+        <div class="auth-buttons-row" style="margin-top: 16px; gap: 10px;">
+          <button id="saveCloudSetupBtn" class="btn btn-primary btn-block">Save & Connect</button>
+          <button id="clearCloudSetupBtn" class="btn btn-outline">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.env.*
+.venv/
+env/
+venv/
+
+# Operating System & Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Office & LibreOffice Temporary / Lock files
+.~lock.*#
+*.tmp
+
+# Supabase Local Credentials (if any)
+.supabase/
+
+# Deployment build outputs
+.vercel/
+dist/
+build/
