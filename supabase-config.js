@@ -9,8 +9,7 @@
  */
 
 window.SUPABASE_CONFIG = {
-  // Replace these with your project values from Supabase Dashboard > Project Settings > API
-  // or enter them via the app UI "⚙️ Cloud Setup"
-  url: window.localStorage.getItem('supabase_project_url') || '',
+  // Your Supabase Project URL (public)
+  url: window.localStorage.getItem('supabase_project_url') || 'https://mtoqugqjtammoxutfrnz.supabase.co',
   anonKey: window.localStorage.getItem('supabase_anon_key') || ''
 };

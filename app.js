@@ -185,8 +185,13 @@
   // ==========================================================================
   function initSupabase() {
     const cfg = window.SUPABASE_CONFIG || {};
-    const url = cfg.url || localStorage.getItem('supabase_project_url');
-    const anonKey = cfg.anonKey || localStorage.getItem('supabase_anon_key');
+    let url = (cfg.url || localStorage.getItem('supabase_project_url') || '').trim();
+    const anonKey = (cfg.anonKey || localStorage.getItem('supabase_anon_key') || '').trim();
+
+    // Automatically strip /rest/v1 or trailing slashes if copied from Data API page
+    if (url) {
+      url = url.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
+    }
 
     if (window.supabase && url && anonKey) {
       try {
@@ -1563,7 +1568,7 @@
     }
 
     el.saveCloudSetupBtn.addEventListener('click', () => {
-      const url = el.setupUrlInput.value.trim();
+      let url = el.setupUrlInput.value.trim().replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
       const anonKey = el.setupAnonKeyInput.value.trim();
 
       if (!url || !anonKey) {
@@ -1571,6 +1576,7 @@
         return;
       }
 
+      el.setupUrlInput.value = url;
       localStorage.setItem('supabase_project_url', url);
       localStorage.setItem('supabase_anon_key', anonKey);
 
