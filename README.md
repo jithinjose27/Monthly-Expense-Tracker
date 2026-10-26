@@ -1,122 +1,154 @@
-<<<<<<< HEAD
-# Monthly-Expense-Tracker
-=======
-# Monthly Personal Expense Tracker (Cloud Web Application)
+# Monthly Expense Tracker
 
-A clean, executive personal expense tracker designed specifically for daily food and lifestyle expense management — featuring dedicated tracking for **Chicken**, **Eggs**, and **Bananas**.
+A lightweight, responsive personal expense tracker designed for daily food and lifestyle budgeting. It features dedicated tracking for dietary staples (chicken, eggs, bananas) alongside general grocery and living expenses, paired with visual charts, monthly budget health indicators, and instant cross-device cloud synchronization.
 
-Accessible from any phone, laptop, or desktop via a single public URL with **instant cross-device synchronization**, **Supabase PostgreSQL cloud database**, **secure authentication**, and **public portfolio showcase mode**.
+You can explore the live deployment here:
+[monthly-expense-tracker-flame.vercel.app](https://monthly-expense-tracker-flame.vercel.app/)
 
----
-
-## 🌟 Key Features
-
-### 1. Multi-Year & Full-Year Calendar Support
-- **Full Coverage**: Easily navigate across October 2026 – December 2026, all 12 months of 2027, and beyond.
-- **Independent Monthly Records**: Each month has its own isolated records and budget. October 2026 data and ₹12,510 budget are preserved as an authentic baseline.
-- **Accurate Day Calculations**: Automatically generates 28, 29, 30, or 31 rows based on the selected month, with leap year handling.
-
-### 2. Dual-Role Security Architecture
-- **Public Portfolio Mode (Read-Only)**: Anyone with your website link can view and inspect your expense data, explore monthly breakdowns, view charts, and download CSV/Excel spreadsheets without logging in.
-- **Authorized Owner Editing**: Only your authenticated account can add, modify, or delete expenses and change budgets.
-- **Row Level Security (RLS)**: Enforced directly at the PostgreSQL database level. Even if visitors inspect frontend code or send direct API requests, all unauthorized writes are rejected.
-
-### 3. Dedicated Dietary & Living Expense Columns
-1. `Date` (e.g., `03 Oct 2026`) - Sticky column on mobile
-2. `Day` (e.g., `Sat`) with weekend indicators - Sticky column on mobile
-3. `Chicken (₹)` (dedicated dietary tracking)
-4. `Eggs (₹)` (dedicated dietary tracking)
-5. `Bananas (₹)` (dedicated dietary tracking)
-6. `Other Food (₹)` (vegetables, dairy, dining)
-7. `Other Expenses (₹)` (utilities, bills, shopping)
-8. `Daily Total (₹)` (automatic live calculation)
-9. `Notes` (context, quantities, e.g. *"Chicken 200g, 14 eggs"*)
-
-### 4. Executive KPI Dashboard & Visual Charts
-- **Live Recalculations**: Grand Total, Remaining Budget, Average Daily Expense, Peak Spending Day, Low Day, and Food Share %.
-- **Category Doughnut Chart**: Interactive SVG doughnut with percentage contributions.
-- **Daily Trend Bar Chart**: Visual bar chart with monthly average reference line and click-to-scroll to jump directly to any day.
-- **Budget Alerts**: Visual progress bar and dynamic alerts for on-track, warning (80%), and over-budget states.
-
-### 5. Client-Side Data Portability
-- **Export to Excel (.xls)**: Instant client-side download of a formatted spreadsheet with XML formulas.
-- **Export to CSV**: Plain text data export.
-- **Print / PDF**: Clean, print-optimized stylesheet.
+The public link opens in read-only visitor mode by default. You can browse through different months and years, view daily breakdown charts, inspect budget metrics, and test data exports without needing an account.
 
 ---
 
-## 📁 Project Structure
+## Why This Project Exists
+
+This project started from a simple personal need: tracking day-to-day food expenses and dietary habits accurately without the bloat of complex accounting software. Tracking items like chicken, eggs, and fruit separately from general household bills makes it easy to see where nutrition and grocery budgets actually go each month.
+
+It originally began as a local setup using Python scripts and an Excel spreadsheet. While that worked well on a desktop, it was impossible to update quickly while out shopping or from a mobile phone.
+
+To solve that, the project was rebuilt into a full cloud-connected web application:
+- Accessible on any mobile phone, tablet, or desktop browser.
+- Stores records in a managed PostgreSQL cloud database via Supabase.
+- Deployed statically on Vercel with automatic continuous deployment on every code push.
+- Protected by database-level security so anyone can view the portfolio demo, but only the owner can modify entries.
+
+---
+
+## What It Does
+
+- Full Calendar and Multi-Year Navigation: Switch between any month and year with independent monthly records, automatic days-in-month calculations, and leap year handling.
+- Dual Access Modes:
+  - Visitor Mode (Public): Safe read-only access for portfolio demonstrations. Visitors can inspect records and charts, but all write attempts are blocked.
+  - Owner Mode (Authenticated): Sign in with your account to unlock live in-line editing, budget adjustments, and automatic cloud saving.
+- Real Database Security: Security is enforced at the database layer using Supabase Row Level Security (RLS) policies. Even if someone inspects the frontend code or sends custom API requests, unauthorized write operations are rejected by the database.
+- Visual Analytics and KPIs:
+  - Grand total and remaining monthly budget calculation.
+  - Daily spending trend bar chart with monthly average reference lines.
+  - Category breakdown doughnut chart showing food share percentage.
+  - Highest and lowest spending day indicators.
+  - Visual budget health indicators (on track, warning threshold, or exceeded).
+- Mobile-Friendly Design: Clean table interface with sticky date and day columns so you can comfortably input expenses from a smartphone.
+- Data Portability: Export your monthly data as a formatted Excel spreadsheet (.xls) with calculation formulas, download as a CSV file, or use the print-optimized stylesheet.
+
+---
+
+## How It Works
+
+The architecture is kept minimal and straightforward:
+
+- Frontend: Written in vanilla HTML, CSS, and modern JavaScript. There are no heavy frameworks, build steps, or bundle dependencies to manage.
+- Database & Auth: Supabase provides the PostgreSQL database and user authentication. The frontend talks directly to the Supabase client using publishable public keys.
+- Debounced Auto-Save: As you edit cells or modify your monthly budget, the app waits 700 milliseconds after you stop typing before sending updates to the cloud, preventing unnecessary network traffic.
+- Hosting: Vercel serves the static files directly from the `src/` directory.
+
+---
+
+## Setting Up Your Own Tracker
+
+If you would like to run your own copy of this expense tracker, follow the steps below.
+
+### 1. Prerequisites
+
+You will need free accounts on:
+- GitHub (to host your repository)
+- Supabase (for the cloud database and user login)
+- Vercel (for hosting the web application)
+
+### 2. Clone the Repository
+
+Clone this repository to your local machine:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Monthly-Expense-Tracker.git
+cd Monthly-Expense-Tracker
+```
+
+### 3. Create and Configure Your Supabase Database
+
+1. Sign in to Supabase and click "New Project". Give your project a name and choose a database password.
+2. In the Supabase sidebar, open the "SQL Editor".
+3. Open the file `database/supabase_schema.sql` from this repository, copy its contents, paste them into the SQL Editor, and click "Run".
+   - This creates the `expenses` and `monthly_budgets` tables.
+   - It sets up Row Level Security (RLS) rules allowing public read access, while restricting insert, update, and delete permissions strictly to authenticated users.
+4. Go to "Authentication" > "Users" in the Supabase sidebar and click "Add User" > "Create User". Enter your email and a password. This will be your owner account for logging into the tracker.
+5. Go to "Project Settings" > "API":
+   - Copy the "Project URL".
+   - Copy the "Project API anon public key" (the publishable key starting with `ey...`).
+   - Note: Never expose or use the `service_role` secret key.
+
+### 4. Connect the App to Your Database
+
+You have two simple ways to connect your credentials:
+
+- Option A (In the browser): Launch the website, click "Cloud Setup" in the bottom status bar, paste your Project URL and Anon Public Key, and click "Save & Connect". These are saved locally in your browser storage.
+- Option B (In the source code): Open `src/supabase-config.js` and set your defaults:
+  ```javascript
+  window.SUPABASE_CONFIG = {
+    url: window.localStorage.getItem('supabase_project_url') || 'YOUR_SUPABASE_PROJECT_URL',
+    anonKey: window.localStorage.getItem('supabase_anon_key') || 'YOUR_SUPABASE_ANON_KEY'
+  };
+  ```
+
+### 5. Deploy to Vercel
+
+1. Push your repository to GitHub.
+2. Sign in to Vercel using your GitHub account.
+3. Click "Add New..." > "Project" and select your repository.
+4. Vercel will read `vercel.json` (which designates `src` as the output directory). Keep framework preset as "Other".
+5. Click "Deploy". Within seconds, you will receive your live HTTPS website URL.
+
+### 6. (Optional) Running Locally
+
+If you prefer to run or test the app on your computer:
+
+```bash
+# Using Python's built-in server
+python3 -m http.server 5000 --directory src
+
+# Or using the local sync script in scripts/
+python3 scripts/server.py
+```
+
+Then open `http://localhost:5000` in your web browser.
+
+---
+
+## Project Structure
 
 ```
 Monthly-Expense-Tracker/
-├── src/                                  # 🌐 Frontend Web Application (Deployed to Vercel)
-│   ├── index.html                        # Application interface & spreadsheet
-│   ├── styles.css                        # Executive styling, themes & responsive rules
-│   ├── app.js                            # Core logic, calculations, charts & cloud sync
-│   └── supabase-config.js                # Public cloud configuration
+├── src/                                  # Frontend web application
+│   ├── index.html                        # Main user interface and spreadsheet layout
+│   ├── styles.css                        # Responsive styles, themes, and sticky columns
+│   ├── app.js                            # State management, calculations, and Supabase sync
+│   └── supabase-config.js                # Public database configuration
 │
-├── database/                             # 🗄️ Database & Schema (For Supabase)
-│   ├── supabase_schema.sql               # Table definitions & Row Level Security (RLS)
-│   └── seed_october_2026.sql             # October 2026 data migration script
+├── database/                             # Database scripts
+│   ├── supabase_schema.sql               # PostgreSQL tables and Row Level Security rules
+│   └── seed_october_2026.sql             # Historical data migration script
 │
-├── scripts/                              # 🐍 Python Tools & Local Utilities
-│   ├── generate_excel.py                 # OpenXML Excel engine
-│   ├── generate_seed_sql.py              # Excel-to-SQL migration generator
-│   ├── server.py                         # Local test server
-│   └── Monthly_Expense_October_2026.xlsx # Preserved historical Excel workbook
+├── scripts/                              # Local utilities
+│   ├── generate_excel.py                 # Spreadsheet generator
+│   ├── generate_seed_sql.py              # Excel to SQL generator script
+│   ├── server.py                         # Local Python development server
+│   └── Monthly_Expense_October_2026.xlsx # Baseline spreadsheet
 │
-├── .gitignore                            # Git ignore rules for caches, lock files, and secrets
-├── vercel.json                           # Vercel deployment configuration (outputDirectory: src)
-└── README.md                             # Project documentation & guide
+├── vercel.json                           # Vercel deployment configuration
+├── .gitignore                            # Ignored files and local caches
+└── README.md                             # Documentation
 ```
 
 ---
 
-## 🚀 Step-by-Step Deployment Guide
+## License
 
-### Step 1: Set Up Supabase (Database & Authentication)
-1. Go to [supabase.com](https://supabase.com) and create a free account.
-2. Click **New Project** and name it (e.g., `personal-expense-tracker`).
-3. In the Supabase Dashboard, open the **SQL Editor** (left navigation).
-4. Open [database/supabase_schema.sql](database/supabase_schema.sql), paste its entire content into the SQL Editor, and click **Run**.
-   - This creates `expenses` and `monthly_budgets` tables.
-   - It enables Row Level Security (RLS) with public read access and owner-only editing.
-5. In your Supabase Dashboard, go to **Authentication > Users** and click **Add User > Create User** (or use your app's "Create Owner Account" option in the UI).
-6. In the SQL Editor, open [database/seed_october_2026.sql](database/seed_october_2026.sql), paste its content, and click **Run**.
-   - This populates your existing October 2026 budget (₹12,510) and all recorded expenses into the database!
-7. In the Supabase Dashboard, go to **Project Settings > API**:
-   - Copy your **Project URL** (e.g. `https://xyzcompany.supabase.co`).
-   - Copy your **Project API anon public key** (the publishable key starting with `ey...`).
-   - *(Never copy or share the `service_role` secret key)*.
-
-### Step 2: Configure Credentials in the App
-You can either:
-- Open [src/supabase-config.js](src/supabase-config.js) and paste the `url` and `anonKey`.
-- OR open the website, click **⚙️ Cloud Setup** in the status bar, paste your Project URL and Anon Key, and click **Save & Connect**. (Saved safely in browser storage).
-
-### Step 3: Push to GitHub (Private Repository)
-```bash
-git init
-git add .
-git commit -m "feat: migrate expense tracker to cloud web app with Supabase and multi-year support"
-git branch -M main
-# Create a private repository on github.com, then run:
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-git push -u origin main
-```
-
-### Step 4: Deploy to Vercel
-1. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
-2. Click **Add New... > Project**.
-3. Import your private repository.
-4. Framework Preset: **Other** (Static HTML). Root Directory: `./`.
-5. Click **Deploy**.
-6. In ~15 seconds, Vercel gives you your free, secure public HTTPS URL (e.g. `https://my-expenses.vercel.app`).
-
----
-
-## 🔒 Verification
-- **On Ubuntu Desktop**: Open your public URL. You will see all your October 2026 expenses in **Visitor (Read-Only)** mode. Click **Sign In**, enter your email/password, and full editing mode unlocks.
-- **On Android Phone**: Open the same URL. Sign in as owner. Change or add an expense today.
-- Reopen on Ubuntu desktop: your updates are instantly saved in PostgreSQL and loaded seamlessly!
->>>>>>> f7307ec (feat: implement personal cloud web app with Supabase, public read access, multi-year support, and sticky mobile layout)
+This project is open source and available under the MIT License. Feel free to adapt it for your own personal budgeting needs.
