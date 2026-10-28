@@ -22,7 +22,7 @@
   const CATEGORIES = [
     { key: 'chicken', label: 'Chicken', color: '#d97706', icon: '🍗' },
     { key: 'eggs', label: 'Eggs', color: '#ca8a04', icon: '🥚' },
-    { key: 'bananas', label: 'Bananas', color: '#65a30d', icon: '🍌' },
+    { key: 'bananas', label: 'Fruits', color: '#65a30d', icon: '🍎' },
     { key: 'otherFood', label: 'Other Food', color: '#059669', icon: '🥗' },
     { key: 'otherExp', label: 'Other Expenses', color: '#4f46e5', icon: '💳' }
   ];
@@ -849,7 +849,7 @@
     const cats = [
       { key: 'chicken', label: 'Chicken', amount: metrics.totalChicken, color: 'var(--cat-chicken)', cls: 'cat-chicken', icon: '🍗' },
       { key: 'eggs', label: 'Eggs', amount: metrics.totalEggs, color: 'var(--cat-eggs)', cls: 'cat-eggs', icon: '🥚' },
-      { key: 'bananas', label: 'Bananas', amount: metrics.totalBananas, color: 'var(--cat-bananas)', cls: 'cat-bananas', icon: '🍌' },
+      { key: 'bananas', label: 'Fruits', amount: metrics.totalBananas, color: 'var(--cat-bananas)', cls: 'cat-bananas', icon: '🍎' },
       { key: 'otherFood', label: 'Other Food', amount: metrics.totalOtherFood, color: 'var(--cat-other-food)', cls: 'cat-other-food', icon: '🥗' },
       { key: 'otherExp', label: 'Other Expenses', amount: metrics.totalOtherExp, color: 'var(--cat-other-exp)', cls: 'cat-other-exp', icon: '💳' }
     ];
@@ -887,7 +887,7 @@
     const items = [
       { key: 'chicken', label: 'Chicken', amount: metrics.totalChicken, color: '#d97706' },
       { key: 'eggs', label: 'Eggs', amount: metrics.totalEggs, color: '#ca8a04' },
-      { key: 'bananas', label: 'Bananas', amount: metrics.totalBananas, color: '#65a30d' },
+      { key: 'bananas', label: 'Fruits', amount: metrics.totalBananas, color: '#65a30d' },
       { key: 'otherFood', label: 'Other Food', amount: metrics.totalOtherFood, color: '#059669' },
       { key: 'otherExp', label: 'Other Exp', amount: metrics.totalOtherExp, color: '#4f46e5' }
     ];
@@ -1122,7 +1122,7 @@
     csv += `Remaining Budget,₹${metrics.remainingBudget}\n`;
     csv += `Average Daily,₹${metrics.avgDaily.toFixed(2)}\n\n`;
 
-    csv += `Date,Day,Chicken (₹),Eggs (₹),Bananas (₹),Other Food (₹),Other Expenses (₹),Daily Total (₹),Notes\n`;
+    csv += `Date,Day,Chicken (₹),Eggs (₹),Fruits (₹),Other Food (₹),Other Expenses (₹),Daily Total (₹),Notes\n`;
 
     for (let day = 1; day <= numDays; day++) {
       const d = state.daysData[day] || { chicken: 0, eggs: 0, bananas: 0, otherFood: 0, otherExp: 0, notes: '' };
@@ -1237,7 +1237,7 @@
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">Day</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">Chicken (₹)</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">Eggs (₹)</Data></Cell>
-    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Bananas (₹)</Data></Cell>
+    <Cell ss:StyleID="sHeader"><Data ss:Type="String">Fruits (₹)</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">Other Food (₹)</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">Other Exp (₹)</Data></Cell>
     <Cell ss:StyleID="sHeader"><Data ss:Type="String">Daily Total (₹)</Data></Cell>

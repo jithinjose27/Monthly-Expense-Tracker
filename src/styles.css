@@ -24,6 +24,8 @@
   --cat-eggs-bg: #fefce8;      /* Yellow 50 */
   --cat-bananas: #65a30d;      /* Lime 600 */
   --cat-bananas-bg: #f7fee7;   /* Lime 50 */
+  --cat-fruits: #65a30d;       /* Lime 600 */
+  --cat-fruits-bg: #f7fee7;    /* Lime 50 */
   --cat-other-food: #059669;   /* Emerald 600 */
   --cat-other-food-bg: #ecfdf5;/* Emerald 50 */
   --cat-other-exp: #4f46e5;    /* Indigo 600 */
@@ -590,7 +592,8 @@ body {
 
 .cat-kpi-card.cat-chicken { border-left-color: var(--cat-chicken); }
 .cat-kpi-card.cat-eggs { border-left-color: var(--cat-eggs); }
-.cat-kpi-card.cat-bananas { border-left-color: var(--cat-bananas); }
+.cat-kpi-card.cat-bananas,
+.cat-kpi-card.cat-fruits { border-left-color: var(--cat-bananas); }
 .cat-kpi-card.cat-other-food { border-left-color: var(--cat-other-food); }
 .cat-kpi-card.cat-other-exp { border-left-color: var(--cat-other-exp); }
 

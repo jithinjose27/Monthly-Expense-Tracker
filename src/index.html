@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Monthly Personal Expense Tracker</title>
+  <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
   <link rel="stylesheet" href="styles.css">
   <!-- Supabase JS Client v2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,7 +26,7 @@
         <div class="brand-icon">₹</div>
         <div class="brand-titles">
           <h1>Monthly Personal Expense Tracker</h1>
-          <p>Daily Food (Chicken, Eggs, Bananas) & Living Expenses</p>
+          <p>Daily Food (Chicken, Eggs, Fruits) & Living Expenses</p>
         </div>
       </div>
 
@@ -186,13 +193,13 @@
           <span class="kpi-badge" style="color: #059669; background: #d1fae5;">Diet</span>
         </div>
         <div id="kpiFoodPercent" class="kpi-value">0.0%</div>
-        <div class="kpi-subtext">Chicken, Eggs, Bananas & Food</div>
+        <div class="kpi-subtext">Chicken, Eggs, Fruits & Food</div>
       </div>
     </section>
 
     <!-- Category Contribution Cards -->
     <section class="category-summary-row" id="catSummaryContainer">
-      <!-- Dynamically populated by app.js: Chicken, Eggs, Bananas, Other Food, Other Expenses -->
+      <!-- Dynamically populated by app.js: Chicken, Eggs, Fruits, Other Food, Other Expenses -->
     </section>
 
     <!-- Visual Charts Grid -->
@@ -256,7 +263,7 @@
               <th class="th-day col-sticky-day">Day</th>
               <th class="th-exp" style="color: #fde68a;">🍗 Chicken (₹)</th>
               <th class="th-exp" style="color: #fef08a;">🥚 Eggs (₹)</th>
-              <th class="th-exp" style="color: #bef264;">🍌 Bananas (₹)</th>
+              <th class="th-exp" style="color: #bef264;">🍎 Fruits (₹)</th>
               <th class="th-exp" style="color: #a7f3d0;">🥗 Other Food (₹)</th>
               <th class="th-exp" style="color: #c7d2fe;">💳 Other Expenses (₹)</th>
               <th class="th-total" style="color: #38bdf8;">Daily Total (₹)</th>
@@ -363,5 +370,12 @@
   </div>
 
   <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

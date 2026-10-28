@@ -1,124 +1,154 @@
 # Monthly Expense Tracker
 
-A lightweight, responsive personal expense tracker designed for daily food and lifestyle budgeting. It features dedicated tracking for dietary staples (chicken, eggs, bananas) alongside general grocery and living expenses, paired with visual charts, monthly budget health indicators, and instant cross-device cloud synchronization.
-
-You can explore the live deployment here:
+Before diving into how everything works, you can check out the live version here:
 [monthly-expense-tracker-flame.vercel.app](https://monthly-expense-tracker-flame.vercel.app/)
 
-The public link opens in read-only visitor mode by default. You can browse through different months and years, view daily breakdown charts, inspect budget metrics, and test data exports without needing an account.
+The public link opens in read-only visitor mode by default. You can freely switch between months and years, look over daily expense records, explore interactive charts, test calculations, and export spreadsheet reports without needing to create an account or sign in.
 
 ---
 
-## Why This Project Exists
+## About This Project
 
-This project started from a simple personal need: tracking day-to-day food expenses and dietary habits accurately without the bloat of complex accounting software. Tracking items like chicken, eggs, and fruit separately from general household bills makes it easy to see where nutrition and grocery budgets actually go each month.
+I built this personal expense tracker to solve a very practical, daily need: keeping close track of my food and lifestyle spending without relying on heavy, bloated financial apps or manual paper notes.
 
-It originally began as a local setup using Python scripts and an Excel spreadsheet. While that worked well on a desktop, it was impossible to update quickly while out shopping or from a mobile phone.
+In my routine, I wanted dedicated tracking for daily protein and staple groceries (specifically Chicken, Eggs, and Fruits) separately from general meals, dining out, and other recurring living expenses. Having dedicated columns for these items lets me immediately see how much of my monthly budget goes toward nutrition versus general living costs.
 
-To solve that, the project was rebuilt into a full cloud-connected web application:
-- Accessible on any mobile phone, tablet, or desktop browser.
-- Stores records in a managed PostgreSQL cloud database via Supabase.
-- Deployed statically on Vercel with automatic continuous deployment on every code push.
-- Protected by database-level security so anyone can view the portfolio demo, but only the owner can modify entries.
+### How the Project Evolved
+
+1. The Local Setup:
+   It originally started as a local project using Python scripts and an Excel spreadsheet on my laptop. While that was functional at home, it was inconvenient when I was out buying groceries or wanting to log expenses directly from my phone.
+
+2. Moving to the Cloud:
+   To make it accessible anywhere, I rebuilt it into a responsive web application backed by a cloud database. It connects to Supabase (a managed PostgreSQL database with built-in authentication and security rules) and deploys automatically on Vercel whenever I update my code.
+
+3. Mobile & Phone App Support:
+   Just like my Holy Bible project, I wanted this tracker to feel like a real app on my phone, not just a bookmark in a browser tab. It now supports both direct Progressive Web App (PWA) installation from the browser and a standalone Android app (APK) built with Capacitor.
 
 ---
 
-## What It Does
+## What the App Does
 
-- Full Calendar and Multi-Year Navigation: Switch between any month and year with independent monthly records, automatic days-in-month calculations, and leap year handling.
-- Dual Access Modes:
-  - Visitor Mode (Public): Safe read-only access for portfolio demonstrations. Visitors can inspect records and charts, but all write attempts are blocked.
-  - Owner Mode (Authenticated): Sign in with your account to unlock live in-line editing, budget adjustments, and automatic cloud saving.
-- Real Database Security: Security is enforced at the database layer using Supabase Row Level Security (RLS) policies. Even if someone inspects the frontend code or sends custom API requests, unauthorized write operations are rejected by the database.
-- Visual Analytics and KPIs:
-  - Grand total and remaining monthly budget calculation.
-  - Daily spending trend bar chart with monthly average reference lines.
-  - Category breakdown doughnut chart showing food share percentage.
-  - Highest and lowest spending day indicators.
+- Multi-Year Calendar Navigation: You can jump across any month and year (e.g. October 2026, all months of 2027, and beyond) with independent records and budgets for each month. Days of the month and leap years are calculated automatically.
+- Dual Access Model:
+  - Visitor Mode: When visitors open the site, they get full read-only access to view data, charts, and summaries.
+  - Owner Mode: When I sign in with my account, the spreadsheet unlocks in-line editing, budget adjustments, and automatic cloud synchronization.
+- Real Database Security (RLS): Security is not just a hidden button on the screen. It is enforced directly inside the PostgreSQL database using Supabase Row Level Security. Even if someone inspects the website code or tries to send direct API requests, the database rejects any unauthorized changes.
+- Visual Dashboard & Metrics:
+  - Real-time totals, average daily expense, and remaining budget calculation.
+  - Interactive category breakdown doughnut chart showing what percentage of your budget goes to food.
+  - Daily spending bar chart with a monthly average line.
+  - Peak and low spending day indicators.
   - Visual budget health indicators (on track, warning threshold, or exceeded).
-- Mobile-Friendly Design: Clean table interface with sticky date and day columns so you can comfortably input expenses from a smartphone.
-- Data Portability: Export your monthly data as a formatted Excel spreadsheet (.xls) with calculation formulas, download as a CSV file, or use the print-optimized stylesheet.
+- Mobile-Optimized Interface: Sticky date and day columns allow easy side-scrolling on phones without losing track of which day you are editing.
+- Data Portability: You can export any month to a formatted Excel workbook (.xls) with calculation formulas, download as a CSV file, or print a clean summary sheet.
 
 ---
 
-## How It Works
+## Let Me Teach You How to Build This on Your Own
 
-The architecture is kept minimal and straightforward:
+If you want to create your own cloud-connected expense tracker, I have laid out the entire process below so you can follow along step by step.
 
-- Frontend: Written in vanilla HTML, CSS, and modern JavaScript. There are no heavy frameworks, build steps, or bundle dependencies to manage.
-- Database & Auth: Supabase provides the PostgreSQL database and user authentication. The frontend talks directly to the Supabase client using publishable public keys.
-- Debounced Auto-Save: As you edit cells or modify your monthly budget, the app waits 700 milliseconds after you stop typing before sending updates to the cloud, preventing unnecessary network traffic.
-- Hosting: Vercel serves the static files directly from the `src/` directory.
+### Step 1: Clone the Code
 
----
-
-## Setting Up Your Own Tracker
-
-If you would like to run your own copy of this expense tracker, follow the steps below.
-
-### 1. Prerequisites
-
-You will need free accounts on:
-- GitHub (to host your repository)
-- Supabase (for the cloud database and user login)
-- Vercel (for hosting the web application)
-
-### 2. Clone the Repository
-
-Clone this repository to your local machine:
+Start by cloning this repository to your computer:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/Monthly-Expense-Tracker.git
 cd Monthly-Expense-Tracker
 ```
 
-### 3. Create and Configure Your Supabase Database
+### Step 2: Set Up Your Free Cloud Database (Supabase)
 
-1. Sign in to Supabase and click "New Project". Give your project a name and choose a database password.
-2. In the Supabase sidebar, open the "SQL Editor".
-3. Open the file `database/supabase_schema.sql` from this repository, copy its contents, paste them into the SQL Editor, and click "Run".
-   - This creates the `expenses` and `monthly_budgets` tables.
-   - It sets up Row Level Security (RLS) rules allowing public read access, while restricting insert, update, and delete permissions strictly to authenticated users.
-4. Go to "Authentication" > "Users" in the Supabase sidebar and click "Add User" > "Create User". Enter your email and a password. This will be your owner account for logging into the tracker.
-5. Go to "Project Settings" > "API":
-   - Copy the "Project URL".
-   - Copy the "Project API anon public key" (the publishable key starting with `ey...`).
-   - Note: Never expose or use the `service_role` secret key.
+Supabase gives you a real PostgreSQL database with user authentication for free.
 
-### 4. Connect the App to Your Database
+1. Go to supabase.com and create a free account.
+2. Click "New Project", give it a name (such as `my-expense-tracker`), and set a database password.
+3. Open the "SQL Editor" from the left menu.
+4. Copy the SQL code from `database/supabase_schema.sql` in this repo, paste it into the SQL Editor, and click "Run".
+   - This creates two tables: `expenses` (storing daily entries for chicken, eggs, fruits, other food, other expenses, and notes) and `monthly_budgets` (storing your budget per month).
+   - It also turns on Row Level Security (RLS) policies so anyone can view the tracker, but only your authenticated account can make changes.
+5. In the Supabase sidebar, go to "Authentication" > "Users" and click "Add User" > "Create User". Enter the email and password you want to use for your owner login.
+6. In the Supabase sidebar, go to "Project Settings" > "API":
+   - Copy your "Project URL".
+   - Copy your "Project API anon public key" (the publishable key starting with `ey...`).
+   - Keep your `service_role` key private; you only need the anon key for the frontend.
 
-You have two simple ways to connect your credentials:
+### Step 3: Connect Your App to Supabase
 
-- Option A (In the browser): Launch the website, click "Cloud Setup" in the bottom status bar, paste your Project URL and Anon Public Key, and click "Save & Connect". These are saved locally in your browser storage.
-- Option B (In the source code): Open `src/supabase-config.js` and set your defaults:
-  ```javascript
-  window.SUPABASE_CONFIG = {
-    url: window.localStorage.getItem('supabase_project_url') || 'YOUR_SUPABASE_PROJECT_URL',
-    anonKey: window.localStorage.getItem('supabase_anon_key') || 'YOUR_SUPABASE_ANON_KEY'
-  };
-  ```
+You can link your credentials in one of two ways:
 
-### 5. Deploy to Vercel
+Method A (Directly through the website interface):
+Open the website, click "Cloud Setup" in the bottom status bar, paste your Project URL and Anon Public Key, and click "Save & Connect". These credentials will be stored safely in your browser local storage.
 
-1. Push your repository to GitHub.
-2. Sign in to Vercel using your GitHub account.
-3. Click "Add New..." > "Project" and select your repository.
-4. Vercel will read `vercel.json` (which designates `src` as the output directory). Keep framework preset as "Other".
-5. Click "Deploy". Within seconds, you will receive your live HTTPS website URL.
+Method B (Pre-configured in code):
+Open `src/supabase-config.js` and set your defaults:
 
-### 6. (Optional) Running Locally
+```javascript
+window.SUPABASE_CONFIG = {
+  url: window.localStorage.getItem('supabase_project_url') || 'YOUR_SUPABASE_PROJECT_URL',
+  anonKey: window.localStorage.getItem('supabase_anon_key') || 'YOUR_SUPABASE_ANON_KEY'
+};
+```
 
-If you prefer to run or test the app on your computer:
+### Step 4: Deploy Your Web Version to Vercel
+
+Vercel provides free, high-speed static hosting with automatic HTTPS:
+
+1. Push your project to a GitHub repository.
+2. Sign in to vercel.com using your GitHub account.
+3. Click "Add New Project" and import your repository.
+4. The project includes a `vercel.json` file that tells Vercel to serve files from the `src` folder. Keep framework preset as "Other" and root directory as `./`.
+5. Click "Deploy". In a few moments, your website will be live on a secure HTTPS domain.
+
+---
+
+## Using It as a Phone App
+
+You do not need to keep opening browser tabs every time you buy groceries. Here are two ways you can run this tracker on your phone:
+
+### Option 1: Install Instantly as a PWA (No App Store or Build Required)
+
+The project includes a web app manifest and service worker:
+
+1. Open your live Vercel URL on your phone's browser (e.g. Chrome on Android or Safari on iPhone).
+2. On Android: Tap the three dots menu in Chrome and select "Install app" or "Add to Home screen".
+3. On iPhone: Tap the Share button in Safari and tap "Add to Home Screen".
+4. The app will install directly onto your home screen with its own icon and open in full-screen mode just like a native app.
+
+### Option 2: Build the Native Android App (APK) with Capacitor
+
+If you want a standalone Android APK package (just like in the Holy Bible project):
+
+1. Install project dependencies:
+   ```bash
+   yarn install
+   ```
+2. Build the Android APK with a single command:
+   ```bash
+   yarn build:apk
+   ```
+   This command automatically syncs the web assets into the Android native wrapper (`npx cap sync android`) and compiles the debug APK via Gradle.
+3. Once the build finishes, you will find `MonthlyExpenseTracker-debug.apk` directly in the project root directory.
+4. Transfer this APK file to your phone and install it, or install it via your terminal using ADB:
+   ```bash
+   adb install -r MonthlyExpenseTracker-debug.apk
+   ```
+
+---
+
+## Running Locally on Your Computer
+
+If you want to test or make changes locally before pushing:
 
 ```bash
-# Using Python's built-in server
+# Option 1: Using Python simple server
 python3 -m http.server 5000 --directory src
 
-# Or using the local sync script in scripts/
+# Option 2: Using the local Python server in scripts
 python3 scripts/server.py
 ```
 
-Then open `http://localhost:5000` in your web browser.
+Then visit `http://localhost:5000` in your browser.
 
 ---
 
@@ -126,14 +156,21 @@ Then open `http://localhost:5000` in your web browser.
 
 ```
 Monthly-Expense-Tracker/
-├── src/                                  # Frontend web application
-│   ├── index.html                        # Main user interface and spreadsheet layout
-│   ├── styles.css                        # Responsive styles, themes, and sticky columns
-│   ├── app.js                            # State management, calculations, and Supabase sync
-│   └── supabase-config.js                # Public database configuration
+├── src/                                  # Web application & PWA source
+│   ├── index.html                        # Main interface and spreadsheet
+│   ├── styles.css                        # Themes, responsive layout & sticky columns
+│   ├── app.js                            # State, calculations, charts & cloud sync
+│   ├── supabase-config.js                # Database connection settings
+│   ├── manifest.json                     # PWA configuration
+│   ├── sw.js                             # Service worker for offline caching
+│   └── icons/                            # App icons (PWA & Android launcher)
 │
-├── database/                             # Database scripts
-│   ├── supabase_schema.sql               # PostgreSQL tables and Row Level Security rules
+├── android/                              # Native Android project (Capacitor)
+│   ├── app/                              # Android app configuration, manifests, & resources
+│   └── gradlew                           # Gradle build wrapper
+│
+├── database/                             # Database SQL scripts
+│   ├── supabase_schema.sql               # PostgreSQL tables and RLS security rules
 │   └── seed_october_2026.sql             # Historical data migration script
 │
 ├── scripts/                              # Local utilities
@@ -142,13 +179,16 @@ Monthly-Expense-Tracker/
 │   ├── server.py                         # Local Python development server
 │   └── Monthly_Expense_October_2026.xlsx # Baseline spreadsheet
 │
+├── MonthlyExpenseTracker-debug.apk       # Standalone compiled Android APK
+├── capacitor.config.json                 # Capacitor app configuration
+├── package.json                          # Build scripts and dependencies
 ├── vercel.json                           # Vercel deployment configuration
-├── .gitignore                            # Ignored files and local caches
-└── README.md                             # Documentation
+├── .gitignore                            # Ignored build caches and dependencies
+└── README.md                             # Documentation & tutorial
 ```
 
 ---
 
 ## License
 
-This project is open source and available under the MIT License. Feel free to adapt it for your own personal budgeting needs.
+This project is open source and available under the MIT License. Feel free to clone it, modify the categories, and adapt it for your own personal budgeting workflow.

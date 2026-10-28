@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.expenses (
     expense_date DATE NOT NULL,
     chicken NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
     eggs NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
-    bananas NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    bananas NUMERIC(10, 2) NOT NULL DEFAULT 0.00, -- Represents 'Fruits' in the UI
     other_food NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
     other_exp NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
     notes TEXT NOT NULL DEFAULT '',
